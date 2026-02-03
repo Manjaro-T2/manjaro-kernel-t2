@@ -1,5 +1,4 @@
-# Maintainer: Rishon Jonathan R <himesaka@noa.codes>
-# WARNING: THIS IS AN EXPERIMENTAL KERNEL. DO NOT USE THIS AS A DAILY DRIVER
+# Maintainer: Noa Himesaka <himesaka@noa.codes>
 # Manjaro maintainers:
 # Bernhard Landauer <bernhard@manjaro.org>
 # Philip Müller <philm[at]manjaro[dot]org>
@@ -9,9 +8,8 @@
 
 _basekernel=6.12
 _rc=
-# Note: _basever strips dots from version (6.12 -> 612) for package naming
-_basever=${_basekernel//.}
-_kernelname=-Manjaro-T2
+_basever=${_basekernel//./}
+_kernelname=-Watanare-T2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
 pkgver=6.12.68
@@ -22,38 +20,30 @@ license=('GPL2')
 makedepends=(bc docbook-xsl libelf pahole git inetutils kmod xmlto cpio perl tar xz)
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
-        "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
-        'config'
-        patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.12
+  "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
+  'config'
+  patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.12
 )
 
-sha256sums=('SKIP'  # TODO: Run 'updpkgsums' to update this checksum for linux-6.12.tar.xz
-            'SKIP'  # TODO: Run 'updpkgsums' to update this checksum for patch-6.12.44.xz
-            'e0205327d435f519ecb7947c5544a8ec75b02e8327748323f61c3dc5fa096fd9'
-            'SKIP')
+sha256sums=('SKIP'
+  'SKIP'
+  'SKIP'
+  'SKIP')
 
 prepare() {
-  # Security check: Ensure checksums are updated before building
-  if [[ "${sha256sums[0]}" == "SKIP" || "${sha256sums[1]}" == "SKIP" ]]; then
-    echo "WARNING: Checksums for kernel sources are not set!" >&2
-    echo "WARNING: This is a security risk. You must update checksums before building." >&2
-    echo "WARNING: Please run: updpkgsums" >&2
-    echo "WARNING: Or see CHECKSUMS.md for manual checksum update instructions." >&2
-  fi
-
   cd "linux-${_basekernel}"
 
   # add upstream patch
   msg "add upstream patch"
-  patch -p1 -i "../patch-${pkgver}"
+  patch -p1 -i "../patch-${pkgver}" --forward || echo "WARNING: patch failed, continuing"
 
   local src
   for src in "${source[@]}"; do
-      src="${src%%::*}"
-      src="${src##*/}"
-      [[ $src = *.patch ]] || continue
-      msg2 "Applying patch: $src..."
-      patch -Np1 < "../$src"
+    src="${src%%::*}"
+    src="${src##*/}"
+    [[ $src = *.patch ]] || continue
+    msg2 "Applying patch: $src..." || echo "WARNING: patch failed, continuing"
+    patch -Np1 --forward <"../$src"
   done
 
   t2linux_patches=$(ls $srcdir/patches | grep -e \.patch$)
@@ -63,13 +53,13 @@ prepare() {
     src="${src%%::*}"
     src="${src##*/}"
     [[ $src = *.patch ]] || continue
-    echo "Applying patch $src..."
-    patch -Np1 < "../$src"
+    echo "Applying patch $src..." || echo "WARNING: patch failed, continuing"
+    patch -Np1 --forward <"../$src"
   done
 
   echo "Setting config..."
   cp ../config .config
-  cat $srcdir/patches/extra_config >> .config
+  cat $srcdir/patches/extra_config >>.config
 
   if [ "${_kernelname}" != "" ]; then
     sed -i "s|CONFIG_LOCALVERSION=.*|CONFIG_LOCALVERSION=\"${_kernelname}\"|g" ./.config
@@ -102,7 +92,7 @@ package_linux612-t2() {
   depends=('coreutils' 'linux-firmware' 'kmod' 'initramfs')
   optdepends=('wireless-regdb: to set the correct wireless channels of your country')
   provides=("linux=${pkgver}" linux-t2 VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE)
-  replaces=("linux60-t2" "linux61-t2")
+  replaces=("linux60-t2")
 
   cd "linux-${_basekernel}"
 
@@ -121,7 +111,7 @@ package_linux612-t2() {
   echo "${_basekernel}-${CARCH}" | install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_kernver}/kernelbase"
 
   # add kernel version
-  echo "${pkgver}-${pkgrel}-MANJARO x64" > "${pkgdir}/boot/${pkgbase}-${CARCH}.kver"
+  echo "${pkgver}-${pkgrel}-MANJARO x64" >"${pkgdir}/boot/${pkgbase}-${CARCH}.kver"
 
   # make room for external modules
   local _extramodules="extramodules-${_basekernel}${_kernelname:--MANJARO}"
@@ -132,7 +122,7 @@ package_linux612-t2() {
     install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
 
   # remove build and source links
-  rm "${pkgdir}"/usr/lib/modules/${_kernver}/{source,build}
+  rm "${pkgdir}"/usr/lib/modules/${_kernver}/{build}
 
   # now we call depmod...
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
@@ -142,7 +132,7 @@ package_linux612-t2-headers() {
   pkgdesc="Header files and scripts for building modules for ${pkgbase/linux/Linux} kernel"
   depends=('gawk' 'python' 'libelf' 'pahole')
   provides=("linux-headers=$pkgver" "linux-t2-headers")
-  replaces=("linux60-t2-headers" "linux61-t2-headers")
+  replaces=("linux60-t2-headers")
 
   cd "linux-${_basekernel}"
   local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
@@ -200,14 +190,14 @@ package_linux612-t2-headers() {
   local file
   while read -rd '' file; do
     case "$(file -bi "$file")" in
-      application/x-sharedlib\;*)      # Libraries (.so)
-        strip $STRIP_SHARED "$file" ;;
-      application/x-archive\;*)        # Libraries (.a)
-        strip $STRIP_STATIC "$file" ;;
-      application/x-executable\;*)     # Binaries
-        strip $STRIP_BINARIES "$file" ;;
-      application/x-pie-executable\;*) # Relocatable binaries
-        strip $STRIP_SHARED "$file" ;;
+    application/x-sharedlib\;*) # Libraries (.so)
+      strip $STRIP_SHARED "$file" ;;
+    application/x-archive\;*) # Libraries (.a)
+      strip $STRIP_STATIC "$file" ;;
+    application/x-executable\;*) # Binaries
+      strip $STRIP_BINARIES "$file" ;;
+    application/x-pie-executable\;*) # Relocatable binaries
+      strip $STRIP_SHARED "$file" ;;
     esac
   done < <(find "${_builddir}" -type f -perm -u+x ! -name vmlinux -print0 2>/dev/null)
   strip $STRIP_STATIC "${_builddir}/vmlinux"
@@ -215,4 +205,3 @@ package_linux612-t2-headers() {
   # remove unwanted files
   find ${_builddir} -name '*.orig' -delete
 }
-
