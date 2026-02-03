@@ -25,19 +25,19 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.x
         patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.12
 )
 
-sha256sums=('SKIP'
-            'SKIP'
+sha256sums=('SKIP'  # TODO: Run 'updpkgsums' to update this checksum for linux-6.12.tar.xz
+            'SKIP'  # TODO: Run 'updpkgsums' to update this checksum for patch-6.12.44.xz
             'e0205327d435f519ecb7947c5544a8ec75b02e8327748323f61c3dc5fa096fd9'
             'SKIP')
 
 prepare() {
   # Security check: Ensure checksums are updated before building
   if [[ "${sha256sums[0]}" == "SKIP" || "${sha256sums[1]}" == "SKIP" ]]; then
-    error "Checksums for kernel sources are not set!"
-    error "This is a security risk. You must update checksums before building."
-    error "Please run: updpkgsums"
-    error "Or see CHECKSUMS.md for manual checksum update instructions."
-    return 1
+    echo "ERROR: Checksums for kernel sources are not set!" >&2
+    echo "ERROR: This is a security risk. You must update checksums before building." >&2
+    echo "ERROR: Please run: updpkgsums" >&2
+    echo "ERROR: Or see CHECKSUMS.md for manual checksum update instructions." >&2
+    exit 1
   fi
 
   cd "linux-${_basekernel}"
