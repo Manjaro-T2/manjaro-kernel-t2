@@ -14,10 +14,33 @@ pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
 pkgver=6.12.68
 pkgrel=1
+pkgdesc='Manjaro linux kernel for T2 Macs'
 arch=('x86_64')
 url="https://www.kernel.org/"
 license=('GPL2')
-makedepends=(bc docbook-xsl libelf pahole git inetutils kmod xmlto cpio perl tar xz)
+
+makedepends=(
+  bc
+  docbook-xsl
+  libelf
+  pahole git
+  inetutils
+  kmod
+  xmlto
+  cpio
+  perl
+  tar
+  xz
+  gettext
+  graphviz
+  imagemagick
+  python-sphinx
+  texlive-latexextra
+  xmlto
+  libbpf
+  zlib
+)
+
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
