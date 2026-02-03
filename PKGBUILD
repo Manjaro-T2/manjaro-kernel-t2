@@ -6,13 +6,13 @@
 # Tobias Powalowski <tpowa@archlinux.org>
 # Thomas Baechler <thomas@archlinux.org>
 
-_basekernel=6.1
+_basekernel=6.12
 _rc=
 _basever=${_basekernel//.}
 _kernelname=-Watanare-T2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.1.27
+pkgver=6.12.44
 pkgrel=1
 arch=('x86_64')
 url="https://www.kernel.org/"
@@ -22,11 +22,11 @@ options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
         "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
         'config'
-        patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.1
+        patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.12
 )
 
-sha256sums=('2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb'
-            'c9501bd96fcf210c0b68a07500bede63c0e1f7d371eb616467dd160dbd39715a'
+sha256sums=('SKIP'
+            'SKIP'
             'e0205327d435f519ecb7947c5544a8ec75b02e8327748323f61c3dc5fa096fd9'
             'SKIP')
 
@@ -87,12 +87,12 @@ build() {
   make LOCALVERSION= bzImage modules
 }
 
-package_linux61-t2() {
+package_linux612-t2() {
   pkgdesc="The ${pkgbase/linux/Linux} kernel and modules"
   depends=('coreutils' 'linux-firmware' 'kmod' 'initramfs')
   optdepends=('wireless-regdb: to set the correct wireless channels of your country')
   provides=("linux=${pkgver}" linux-t2 VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE KSMBD-MODULE)
-  replaces=("linux60-t2")
+  replaces=("linux60-t2" "linux61-t2")
 
   cd "linux-${_basekernel}"
 
@@ -128,11 +128,11 @@ package_linux61-t2() {
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
 }
 
-package_linux61-t2-headers() {
+package_linux612-t2-headers() {
   pkgdesc="Header files and scripts for building modules for ${pkgbase/linux/Linux} kernel"
   depends=('gawk' 'python' 'libelf' 'pahole')
   provides=("linux-headers=$pkgver" "linux-t2-headers")
-  replaces=("linux60-t2-headers")
+  replaces=("linux60-t2-headers" "linux61-t2-headers")
 
   cd "linux-${_basekernel}"
   local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
