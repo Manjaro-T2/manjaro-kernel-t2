@@ -57,8 +57,8 @@ jobs:
          draft: ${{ contains(github.event.head_commit.message, '[draft]') }}
          prerelease: ${{ contains(github.event.head_commit.message, '[prerel]') }}
          body: |
-          This release features Sena Ajisai from [There’s No Freaking Way I’ll be Your Lover! Unless…](https://sevenseasentertainment.com/series/theres-no-freaking-way-ill-be-your-lover-unless-light-novel/)!
-          Every major release will feature new anime/manga and minor releases will have different characters!
+          This release features the newest Manjaro 6.12 LTS
+          Every major release will recieve performance improvements, bug fixes and more.
           Install packages with `sudo pacman -U <file>`, you can use urls or file paths.
       env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
