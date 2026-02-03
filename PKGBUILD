@@ -12,7 +12,7 @@ _basever=${_basekernel//.}
 _kernelname=-Watanare-T2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.1.27
+pkgver=6.1.88
 pkgrel=1
 arch=('x86_64')
 url="https://www.kernel.org/"
@@ -26,7 +26,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.x
 )
 
 sha256sums=('2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb'
-            'c9501bd96fcf210c0b68a07500bede63c0e1f7d371eb616467dd160dbd39715a'
+            'SKIP'  # TODO: Run 'updpkgsums' to update this checksum for patch-6.1.88.xz
             'e0205327d435f519ecb7947c5544a8ec75b02e8327748323f61c3dc5fa096fd9'
             'SKIP')
 
