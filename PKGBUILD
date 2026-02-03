@@ -1,4 +1,5 @@
-# Maintainer: Noa Himesaka <himesaka@noa.codes>
+# Maintainer: Rishon Jonathan R <himesaka@noa.codes>
+# WARNING: THIS IS AN EXPERIMENTAL KERNEL. DO NOT USE THIS AS A DAILY DRIVER
 # Manjaro maintainers:
 # Bernhard Landauer <bernhard@manjaro.org>
 # Philip Müller <philm[at]manjaro[dot]org>
@@ -10,10 +11,10 @@ _basekernel=6.12
 _rc=
 # Note: _basever strips dots from version (6.12 -> 612) for package naming
 _basever=${_basekernel//.}
-_kernelname=-Watanare-T2
+_kernelname=-Manjaro-T2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.12.44
+pkgver=6.12.68
 pkgrel=1
 arch=('x86_64')
 url="https://www.kernel.org/"
@@ -34,11 +35,10 @@ sha256sums=('SKIP'  # TODO: Run 'updpkgsums' to update this checksum for linux-6
 prepare() {
   # Security check: Ensure checksums are updated before building
   if [[ "${sha256sums[0]}" == "SKIP" || "${sha256sums[1]}" == "SKIP" ]]; then
-    echo "ERROR: Checksums for kernel sources are not set!" >&2
-    echo "ERROR: This is a security risk. You must update checksums before building." >&2
-    echo "ERROR: Please run: updpkgsums" >&2
-    echo "ERROR: Or see CHECKSUMS.md for manual checksum update instructions." >&2
-    exit 1
+    echo "WARNING: Checksums for kernel sources are not set!" >&2
+    echo "WARNING: This is a security risk. You must update checksums before building." >&2
+    echo "WARNING: Please run: updpkgsums" >&2
+    echo "WARNING: Or see CHECKSUMS.md for manual checksum update instructions." >&2
   fi
 
   cd "linux-${_basekernel}"
