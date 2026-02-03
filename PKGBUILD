@@ -26,7 +26,7 @@ source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.x
 )
 
 sha256sums=('2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb'
-            'SKIP'  # TODO: Run 'updpkgsums' to update this checksum for patch-6.1.88.xz
+            'SKIP'  # IMPORTANT: Must run 'updpkgsums' before building to verify patch integrity
             'e0205327d435f519ecb7947c5544a8ec75b02e8327748323f61c3dc5fa096fd9'
             'SKIP')
 
