@@ -8,6 +8,7 @@
 
 _basekernel=6.12
 _rc=
+# Note: _basever strips dots from version (6.12 -> 612) for package naming
 _basever=${_basekernel//.}
 _kernelname=-Watanare-T2
 pkgbase=linux${_basever}-t2
