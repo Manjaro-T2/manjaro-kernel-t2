@@ -31,6 +31,15 @@ sha256sums=('SKIP'
             'SKIP')
 
 prepare() {
+  # Security check: Ensure checksums are updated before building
+  if [[ "${sha256sums[0]}" == "SKIP" || "${sha256sums[1]}" == "SKIP" ]]; then
+    error "Checksums for kernel sources are not set!"
+    error "This is a security risk. You must update checksums before building."
+    error "Please run: updpkgsums"
+    error "Or see CHECKSUMS.md for manual checksum update instructions."
+    return 1
+  fi
+
   cd "linux-${_basekernel}"
 
   # add upstream patch
