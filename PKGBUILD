@@ -145,7 +145,7 @@ package_linux612-t2() {
     install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
 
   # remove build and source links
-  rm "${pkgdir}"/usr/lib/modules/${_kernver}/{build}
+  #rm "${pkgdir}"/usr/lib/modules/${_kernver}/{build}
 
   # now we call depmod...
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
