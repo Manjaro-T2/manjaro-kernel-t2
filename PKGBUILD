@@ -6,7 +6,7 @@
 # Tobias Powalowski <tpowa@archlinux.org>
 # Thomas Baechler <thomas@archlinux.org>
 
-_basekernel=6.12
+_basekernel=6.18
 _rc=
 _basever=${_basekernel//./}
 _kernelname=-manjaro-t2
