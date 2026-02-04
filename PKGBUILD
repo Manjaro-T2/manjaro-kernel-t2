@@ -1,4 +1,4 @@
-# Maintainer: Noa Himesaka <himesaka@noa.codes>
+# Maintainer: Rishon Jonathan <https://github.com/RishonDev>
 # Manjaro maintainers:
 # Bernhard Landauer <bernhard@manjaro.org>
 # Philip Müller <philm[at]manjaro[dot]org>
@@ -9,7 +9,7 @@
 _basekernel=6.12
 _rc=
 _basever=${_basekernel//./}
-_kernelname=-Watanare-T2
+_kernelname=-manjaro-t2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
 pkgver=6.12.68
