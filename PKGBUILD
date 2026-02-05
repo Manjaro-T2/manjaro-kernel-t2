@@ -77,7 +77,7 @@ prepare() {
     src="${src##*/}"
     [[ $src = *.patch ]] || continue
     echo "Applying patch $src..."  
-    patch -Np1 --forward <"../$src" || || echo "WARNING: patch failed, continuing"
+    patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
   done
 
   echo "Setting config..."
