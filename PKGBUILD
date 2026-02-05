@@ -65,8 +65,8 @@ prepare() {
     src="${src%%::*}"
     src="${src##*/}"
     [[ $src = *.patch ]] || continue
-    msg2 "Applying patch: $src..." || echo "WARNING: patch failed, continuing"
-    patch -Np1 --forward <"../$src"
+    msg2 "Applying patch: $src..."
+    patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
   done
 
   t2linux_patches=$(ls $srcdir/patches | grep -e \.patch$)
