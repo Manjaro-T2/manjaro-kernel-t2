@@ -1,8 +1,11 @@
 name: Build Kernel Package
 on: [push, pull_request]
+permissions:contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
@@ -51,7 +54,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
          files: |
-           ${{ github.workspace }}/*.zip
            ${{ github.workspace }}/*.pkg.tar.*
          tag_name: v${{ steps.create_tag.outputs.tag }}
          name: ${{ steps.create_tag.outputs.tag }} - Release
