@@ -1,6 +1,7 @@
 name: Build Kernel Package
+permissions:
+  contents: write
 on: [push, pull_request]
-permissions:contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
