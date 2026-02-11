@@ -12,7 +12,7 @@ _basever=${_basekernel//./}
 _kernelname=-manjaro-t2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.12.69
+pkgver=6.12.70
 pkgrel=1
 pkgdesc='Manjaro linux kernel for T2 Macs'
 arch=('x86_64')
@@ -76,7 +76,7 @@ prepare() {
     src="${src%%::*}"
     src="${src##*/}"
     [[ $src = *.patch ]] || continue
-    echo "Applying patch $src..."  
+    echo "Applying patch $src..."
     patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
   done
 
