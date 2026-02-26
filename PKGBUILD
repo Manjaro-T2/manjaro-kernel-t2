@@ -6,13 +6,13 @@
 # Tobias Powalowski <tpowa@archlinux.org>
 # Thomas Baechler <thomas@archlinux.org>
 
-_basekernel=6.12
+_basekernel=6.18
 _rc=
 _basever=${_basekernel//./}
 _kernelname=-manjaro-t2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.12.70
+pkgver=6.18.13
 pkgrel=1
 pkgdesc='Manjaro linux kernel for T2 Macs'
 arch=('x86_64')
@@ -45,7 +45,7 @@ options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
   'config'
-  patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.12
+  patches::git+https://github.com/t2linux/linux-t2-patches#branch=6.18
 )
 
 sha256sums=('SKIP'
@@ -110,7 +110,7 @@ build() {
   make LOCALVERSION= bzImage modules
 }
 
-package_linux612-t2() {
+package_linux618-t2() {
   pkgdesc="The ${pkgbase/linux/Linux} kernel and modules"
   depends=('coreutils' 'linux-firmware' 'kmod' 'initramfs')
   optdepends=('wireless-regdb: to set the correct wireless channels of your country')
@@ -151,7 +151,7 @@ package_linux612-t2() {
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
 }
 
-package_linux612-t2-headers() {
+package_linux618-t2-headers() {
   pkgdesc="Header files and scripts for building modules for ${pkgbase/linux/Linux} kernel"
   depends=('gawk' 'python' 'libelf' 'pahole')
   provides=("linux-headers=$pkgver" "linux-t2-headers")
