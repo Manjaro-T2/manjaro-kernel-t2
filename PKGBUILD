@@ -96,11 +96,11 @@ prepare() {
   # We'll do this ourselves in packaging
   sed -i '2iexit 0' scripts/depmod.sh
 
+  msg "rewrite configuration"
+  make olddefconfig >/dev/null
+
   msg "get kernel version"
   make prepare
-
-  msg "rewrite configuration"
-  yes "" | make config >/dev/null
 }
 
 build() {
