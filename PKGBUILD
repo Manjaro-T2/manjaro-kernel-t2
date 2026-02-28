@@ -12,7 +12,7 @@ _basever=${_basekernel//./}
 _kernelname=-manjaro-t2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.18.13
+pkgver=6.18.15
 pkgrel=1
 pkgdesc='Manjaro linux kernel for T2 Macs'
 arch=('x86_64')
@@ -45,7 +45,7 @@ options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
   'config'
-  patches::git+https://github.com/t2linux/linux-t2-patchesRem
+  patches::git+https://github.com/t2linux/linux-t2-patches
 )
 
 sha256sums=('SKIP'
@@ -158,6 +158,7 @@ package_linux618-t2-headers() {
   replaces=("linux60-t2-headers")
 
   cd "linux-${_basekernel}"
+  local _kernver="$(make LOCALVERSION= kernelrelease)"
   local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
 
   install -Dt "${_builddir}" -m644 Makefile .config Module.symvers
