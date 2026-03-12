@@ -71,16 +71,16 @@ prepare() {
     patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
   done
 
-  t2linux_patches=$(ls $srcdir/patches | grep -e \.patch$)
-  mv $srcdir/patches/*.patch $srcdir/
-  local src
-  for src in "${source[@]}" $t2linux_patches; do
-    src="${src%%::*}"
-    src="${src##*/}"
-    [[ $src = *.patch ]] || continue
-    echo "Applying patch $src..." || echo "WARNING: patch failed, continuing"
-    patch -Np1 --forward <"../$src"
-  done
+  local t2linux_patches=("$srcdir"/patches/*.patch)
+  if (( ${#t2linux_patches[@]} )) && [[ -e ${t2linux_patches[0]} ]]; then
+    mv "${t2linux_patches[@]}" "$srcdir"/
+    local patch_file
+    for patch_file in "${t2linux_patches[@]}"; do
+      src="${patch_file##*/}"
+      echo "Applying patch $src..." || echo "WARNING: patch failed, continuing"
+      patch -Np1 --forward <"../$src"
+    done
+  fi
 
   echo "Setting config..."
   cp ../config .config
