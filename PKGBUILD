@@ -44,11 +44,13 @@ makedepends=(
 options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
+  "https://github.com/Manjaro-T2/manjaro-kernel-t2/releases/download/v6.18.15/v3-0001-tg3-replace-placeholder-MAC-address-with-device-p.patch"
   'config'
   patches::git+https://github.com/t2linux/linux-t2-patches.git
 )
 
 sha256sums=('SKIP'
+  'SKIP'
   'SKIP'
   'SKIP'
   'SKIP')
