@@ -12,7 +12,7 @@ _basever=${_basekernel//./}
 _kernelname=-manjaro-t2
 pkgbase=linux${_basever}-t2
 pkgname=("$pkgbase" "$pkgbase-headers")
-pkgver=6.19.5
+pkgver=6.19.7
 pkgrel=1
 pkgdesc='Manjaro linux kernel for T2 Macs'
 arch=('x86_64')
@@ -145,7 +145,7 @@ package_linux619-t2() {
     install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
 
   # remove build and source links
-  #rm "${pkgdir}"/usr/lib/modules/${_kernver}/{build}
+  rm -f "${pkgdir}"/usr/lib/modules/${_kernver}/{build,source} || true
 
   # now we call depmod...
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
@@ -158,6 +158,7 @@ package_linux619-t2-headers() {
   replaces=("linux60-t2-headers")
 
   cd "linux-${_basekernel}"
+  local _kernver="$(make LOCALVERSION= kernelrelease)"
   local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
 
   install -Dt "${_builddir}" -m644 Makefile .config Module.symvers
