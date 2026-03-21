@@ -1,0 +1,43 @@
+name: Update LTS Kernel
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Update PKGBUILD To Latest LTS
+        id: update
+        run: python3 scripts/update_lts_kernel.py --github-output "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        if: steps.update.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: chore: update LTS kernel to ${{ steps.update.outputs.latest_version }} [no rel]
+          branch: bot/update-lts-kernel-${{ steps.update.outputs.latest_version }}
+          title: chore: update LTS kernel to ${{ steps.update.outputs.latest_version }}
+          body: |
+            Automated weekly update to the latest upstream Linux longterm release.
+
+            Source: https://www.kernel.org/releases.json
+            Target version: `${{ steps.update.outputs.latest_version }}`
+          labels: |
+            automation
+            dependencies
