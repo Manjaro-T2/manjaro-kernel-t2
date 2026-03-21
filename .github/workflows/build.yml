@@ -1,6 +1,5 @@
 name: Build Kernel Package
 on:
-  push:
   pull_request:
   workflow_dispatch:
 permissions:
