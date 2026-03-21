@@ -2,3 +2,6 @@
 /pkg/
 /*.pkg.tar.*
 /*.src.tar.*
+/linux-*.tar.*
+/patch-*.xz
+/patches/
