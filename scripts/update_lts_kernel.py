@@ -13,7 +13,6 @@ from urllib.request import urlopen
 
 RELEASES_URL = "https://www.kernel.org/releases.json"
 PKGBUILD_PATH = Path(__file__).resolve().parent.parent / "PKGBUILD"
-VERSION_TXT_PATH = Path(__file__).resolve().parent.parent / "version.txt"
 
 
 def parse_version(version: str) -> tuple[int, ...]:
@@ -45,10 +44,6 @@ def replace_once(text: str, pattern: str, replacement: str) -> str:
     if count != 1:
         raise RuntimeError(f"Expected to update exactly one match for pattern: {pattern}")
     return updated
-
-
-def write_version_file(path: Path, version: str) -> None:
-    path.write_text(f"{version}\n", encoding="utf-8")
 
 
 def update_pkgbuild(path: Path, latest_version: str) -> tuple[bool, str, str]:
@@ -109,7 +104,6 @@ def main() -> int:
     )
     parser.add_argument("--releases-url", default=RELEASES_URL)
     parser.add_argument("--pkgbuild", type=Path, default=PKGBUILD_PATH)
-    parser.add_argument("--version-file", type=Path, default=VERSION_TXT_PATH)
     parser.add_argument("--github-output", default=os.environ.get("GITHUB_OUTPUT"))
     parser.add_argument(
         "--check",
@@ -139,7 +133,6 @@ def main() -> int:
         return 2 if needs_update else 0
 
     updated, previous_version, latest_basekernel = update_pkgbuild(args.pkgbuild, latest_version)
-    write_version_file(args.version_file, latest_version)
     if args.github_output:
         write_github_outputs(
             args.github_output,

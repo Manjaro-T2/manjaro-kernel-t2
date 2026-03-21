@@ -31,11 +31,6 @@ Preview what would be removed without deleting anything:
 
 The repository includes a scheduled GitHub Actions workflow at `.github/workflows/update-lts-kernel.yml` that checks `https://www.kernel.org/releases.json` every Monday and opens a pull request when a newer upstream longterm release is available.
 
-The build workflow at `.github/workflows/build.yml` also generates `version.txt` from `PKGBUILD` on every CI build, then uploads it alongside the built packages and includes it in GitHub releases.
+The build workflow at `.github/workflows/build.yml` publishes the latest LTS packages to the moving series tag, for example `618-lts`, and also creates a fixed version tag without dots, for example `61816`.
 
-The updater script rewrites:
-
-- `PKGBUILD`
-- `version.txt`
-
-`version.txt` contains the current upstream kernel version as a single line, for example `6.18.16`.
+The updater script rewrites `PKGBUILD`.
