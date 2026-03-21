@@ -48,7 +48,8 @@ jobs:
       id: create_tag
       run: |
         source PKGBUILD
-        echo "::set-output name=tag::${pkgver}"
+        echo "tag=${pkgver}" >> "$GITHUB_OUTPUT"
+        echo "basekernel=${_basekernel}" >> "$GITHUB_OUTPUT"
         echo $pkgver $pkgrel
     - name: Release
       if: ${{ !contains(github.event.head_commit.message, '[no rel]') && !contains(github.event.head_commit.message, '[no build]') }}
@@ -61,9 +62,8 @@ jobs:
          draft: ${{ contains(github.event.head_commit.message, '[draft]') }}
          prerelease: ${{ contains(github.event.head_commit.message, '[prerel]') }}
          body: |
-          This release features the newest Manjaro 6.12 LTS
+          This release features the newest Manjaro ${{ steps.create_tag.outputs.basekernel }} Edge
           Every major release will recieve performance improvements, bug fixes and more.
           Install packages with `sudo pacman -U <file>`, you can use urls or file paths.
       env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
