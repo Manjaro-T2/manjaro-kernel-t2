@@ -15,6 +15,18 @@ This runs `makepkg -sfc` by default. Additional arguments are passed through to 
 ./build.sh --syncdeps --cleanbuild
 ```
 
+Remove downloaded sources, `makepkg` work directories, and built package archives with:
+
+```bash
+./cleanup.sh
+```
+
+Preview what would be removed without deleting anything:
+
+```bash
+./cleanup.sh --dry-run
+```
+
 ## GitHub CI
 
 The repository includes a scheduled GitHub Actions workflow at `.github/workflows/update-lts-kernel.yml` that checks `https://www.kernel.org/releases.json` every Monday and opens a pull request when a newer upstream longterm release is available.

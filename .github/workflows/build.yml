@@ -1,7 +1,10 @@
 name: Build Kernel Package
 permissions:
   contents: write
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -67,7 +70,7 @@ jobs:
            ${{ github.workspace }}/*.pkg.tar.*
            ${{ github.workspace }}/version.txt
          tag_name: v${{ steps.create_tag.outputs.tag }}
-         name: ${{ steps.create_tag.outputs.tag }} - Release
+         name: ${{ steps.create_tag.outputs.tag }}
          draft: ${{ contains(github.event.head_commit.message, '[draft]') }}
          prerelease: ${{ contains(github.event.head_commit.message, '[prerel]') }}
          body: |

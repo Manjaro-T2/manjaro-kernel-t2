@@ -30,9 +30,9 @@ jobs:
         if: steps.update.outputs.updated == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: chore: update LTS kernel to ${{ steps.update.outputs.latest_version }} [no rel]
+          commit-message: "chore: update LTS kernel to ${{ steps.update.outputs.latest_version }} [no rel]"
           branch: bot/update-lts-kernel-${{ steps.update.outputs.latest_version }}
-          title: chore: update LTS kernel to ${{ steps.update.outputs.latest_version }}
+          title: "chore: update LTS kernel to ${{ steps.update.outputs.latest_version }}"
           body: |
             Automated weekly update to the latest upstream Linux longterm release.
 
@@ -41,3 +41,15 @@ jobs:
           labels: |
             automation
             dependencies
+
+      - name: Dispatch Build Workflow
+        if: steps.update.outputs.updated == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "build.yml",
+              ref: "bot/update-lts-kernel-${{ steps.update.outputs.latest_version }}",
+            });
