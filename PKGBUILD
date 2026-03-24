@@ -45,7 +45,7 @@ options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
   'config'
-  patches::git+https://github.com/t2linux/linux-t2-patches#branch=${_basekernel}
+  patches::git+https://github.com/t2linux/linux-t2-patches
 )
 
 sha256sums=('SKIP'
