@@ -45,7 +45,7 @@ options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
   'config'
-  patches::git+https://github.com/t2linux/linux-t2-patches
+  patches::git+https://github.com/t2linux/linux-t2-patches#branch=${_basekernel}
 )
 
 sha256sums=('SKIP'
@@ -66,7 +66,7 @@ prepare() {
     src="${src##*/}"
     [[ $src = *.patch ]] || continue
     msg2 "Applying patch: $src..." || echo "WARNING: patch failed, continuing"
-    patch -Np1 --forward <"../$src"
+    patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
   done
 
   t2linux_patches=$(ls $srcdir/patches | grep -e \.patch$)
