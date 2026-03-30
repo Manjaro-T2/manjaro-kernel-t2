@@ -21,7 +21,6 @@ jobs:
         cat << EOF > entrypoint.sh
         set -e
         WORKDIR=/tmp/build
-        timedatectl set-timezone Asia/Kolkata
         groupadd -r $BUILDGROUP
         useradd $BUILDUSER -g $BUILDGROUP -m
         passwd -d $BUILDUSER
