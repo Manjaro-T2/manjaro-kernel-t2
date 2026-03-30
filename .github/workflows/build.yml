@@ -20,7 +20,6 @@ jobs:
         HOSTNAME=manjaro_build
         cat << EOF > entrypoint.sh
         cd /build
-        timedatectl set-timezone Asia/Kolkata
         groupadd -r $BUILDGROUP
         useradd $BUILDUSER -g $BUILDGROUP -m
         passwd -d $BUILDUSER
