@@ -24,7 +24,7 @@ jobs:
         groupadd -r $BUILDGROUP
         useradd $BUILDUSER -g $BUILDGROUP -m
         passwd -d $BUILDUSER
-        pacman -Syu --noconfirm --needed sudo base-devel gawk bison pacman-contrib
+        pacman -Syu --noconfirm --needed sudo base-devel gawk bison pacman-contrib git
         printf '$BUILDUSER ALL=(ALL) ALL\\n' | tee -a /etc/sudoers
         rm -rf "\$WORKDIR"
         mkdir -p "\$WORKDIR"
