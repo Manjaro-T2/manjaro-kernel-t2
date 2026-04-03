@@ -144,8 +144,13 @@ package_linux618-t2() {
   echo "${_kernver}" |
     install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
 
-  # remove build and source links
-  #rm "${pkgdir}"/usr/lib/modules/${_kernver}/{build}
+  # remove build/source paths so the headers package can own them.
+  # Be tolerant here because modules_install output can vary by environment.
+  local _modpath="${pkgdir}/usr/lib/modules/${_kernver}"
+  for _path in "${_modpath}/build" "${_modpath}/source"; do
+    [[ -e "${_path}" || -L "${_path}" ]] || continue
+    rm -rf "${_path}"
+  done
 
   # now we call depmod...
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"

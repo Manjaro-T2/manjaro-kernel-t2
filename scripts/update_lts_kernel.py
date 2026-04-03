@@ -13,6 +13,7 @@ from urllib.request import urlopen
 
 RELEASES_URL = "https://www.kernel.org/releases.json"
 PKGBUILD_PATH = Path(__file__).resolve().parent.parent / "PKGBUILD"
+CONFIG_PATH = Path(__file__).resolve().parent.parent / "config"
 
 
 def parse_version(version: str) -> tuple[int, ...]:
@@ -44,6 +45,23 @@ def replace_once(text: str, pattern: str, replacement: str) -> str:
     if count != 1:
         raise RuntimeError(f"Expected to update exactly one match for pattern: {pattern}")
     return updated
+
+
+def update_config(path: Path, latest_version: str) -> bool:
+    text = path.read_text(encoding="utf-8")
+    pattern = r"^(# Linux/x86 )\d+\.\d+\.\d+( Kernel Configuration)$"
+    match = re.search(pattern, text, re.MULTILINE)
+
+    if match is None:
+        raise RuntimeError("Failed to read kernel version header from config")
+
+    current_version = re.search(r"\d+\.\d+\.\d+", match.group(0))
+    if current_version is None or current_version.group(0) == latest_version:
+        return False
+
+    updated = replace_once(text, pattern, rf"\g<1>{latest_version}\g<2>")
+    path.write_text(updated, encoding="utf-8")
+    return True
 
 
 def update_pkgbuild(path: Path, latest_version: str) -> tuple[bool, str, str]:
@@ -133,19 +151,20 @@ def main() -> int:
         return 2 if needs_update else 0
 
     updated, previous_version, latest_basekernel = update_pkgbuild(args.pkgbuild, latest_version)
+    config_updated = update_config(CONFIG_PATH, latest_version)
     if args.github_output:
         write_github_outputs(
             args.github_output,
             current_version=previous_version,
             latest_version=latest_version,
             latest_basekernel=latest_basekernel,
-            updated=updated,
+            updated=updated or config_updated,
         )
 
     print(
         json.dumps(
             {
-                "updated": updated,
+                "updated": updated or config_updated,
                 "current_version": previous_version,
                 "latest_version": latest_version,
                 "latest_basekernel": latest_basekernel,
