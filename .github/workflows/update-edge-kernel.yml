@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Set Up Python
         uses: actions/setup-python@v5
@@ -36,6 +39,7 @@ jobs:
           token: ${{ secrets.CI_GH_TOKEN || github.token }}
           commit-message: "chore: update edge kernel to ${{ steps.update.outputs.latest_version }} [no rel]"
           branch: bot/update-edge-kernel-${{ steps.update.outputs.latest_version }}
+          delete-branch: true
           title: "chore: update edge kernel to ${{ steps.update.outputs.latest_version }}"
           body: |
             Automated weekly update to the latest upstream Linux stable release.
