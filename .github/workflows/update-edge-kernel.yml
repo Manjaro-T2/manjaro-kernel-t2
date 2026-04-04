@@ -29,8 +29,11 @@ jobs:
 
       - name: Create Pull Request
         if: steps.update.outputs.updated == 'true'
+        id: create_pr
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
+          token: ${{ secrets.CI_GH_TOKEN || github.token }}
           commit-message: "chore: update edge kernel to ${{ steps.update.outputs.latest_version }} [no rel]"
           branch: bot/update-edge-kernel-${{ steps.update.outputs.latest_version }}
           title: "chore: update edge kernel to ${{ steps.update.outputs.latest_version }}"
@@ -42,6 +45,12 @@ jobs:
           labels: |
             automation
             dependencies
+
+      - name: Warn When Pull Request Creation Is Blocked
+        if: steps.update.outputs.updated == 'true' && steps.create_pr.outcome == 'failure'
+        run: |
+          echo "::warning::Update branch was pushed, but pull request creation was blocked."
+          echo "::warning::Enable 'Allow GitHub Actions to create and approve pull requests' in repository settings, or add secret CI_GH_TOKEN (classic PAT with repo scope) for PR creation."
 
       - name: Dispatch Build Workflow
         if: always() && steps.update.outputs.updated == 'true'
