@@ -65,25 +65,22 @@ jobs:
         source PKGBUILD
         echo "tag=${pkgver}" >> "$GITHUB_OUTPUT"
         echo "basekernel=${_basekernel}" >> "$GITHUB_OUTPUT"
-        echo "series_tag=${_basever}-lts" >> "$GITHUB_OUTPUT"
         echo "version_tag=${pkgver//./}" >> "$GITHUB_OUTPUT"
         echo "$pkgver $pkgrel"
 
     - name: Publish Releases
       if: ${{ github.event_name == 'workflow_dispatch' && !contains(github.event.head_commit.message, '[no build]') }}
       run: |
-        series_tag="${{ steps.create_tag.outputs.series_tag }}"
         version_tag="${{ steps.create_tag.outputs.version_tag }}"
         release_name="${{ steps.create_tag.outputs.tag }}"
         release_body=$'This release packages Manjaro T2 kernel '"$release_name"$' based on Linux ${{ steps.create_tag.outputs.tag }}.\nIt includes the latest fixes and improvements for this kernel series.\nInstall packages with `sudo pacman -U <file>` using either local file paths or URLs.'
 
-        for tag in "$series_tag" "$version_tag"; do
-          gh release delete "$tag" --yes --cleanup-tag || true
-          git tag -f "$tag" "$GITHUB_SHA"
-          git push origin "refs/tags/$tag" --force
-          gh release create "$tag" ./*.pkg.tar.* \
-            --title "$release_name" \
-            --notes "$release_body"
-        done
+        tag="$version_tag"
+        gh release delete "$tag" --yes --cleanup-tag || true
+        git tag -f "$tag" "$GITHUB_SHA"
+        git push origin "refs/tags/$tag" --force
+        gh release create "$tag" ./*.pkg.tar.* \
+          --title "$release_name" \
+          --notes "$release_body"
       env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
