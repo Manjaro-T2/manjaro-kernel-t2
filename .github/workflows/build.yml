@@ -2,6 +2,9 @@ name: Build Kernel Package
 permissions:
   contents: write
 on:
+  push:
+    branches:
+      - edge
   pull_request:
   workflow_dispatch:
 jobs:
@@ -59,7 +62,7 @@ jobs:
         rm -f .git/index.lock .git/config.lock .git/refs/tags/*.lock
         
     - name: Create Tag
-      if: ${{ github.event_name == 'workflow_dispatch' && !contains(github.event.head_commit.message, '[no build]') }}
+      if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[no build]') }}
       id: create_tag
       run: |
         source PKGBUILD
@@ -69,7 +72,7 @@ jobs:
         echo "$pkgver $pkgrel"
 
     - name: Publish Releases
-      if: ${{ github.event_name == 'workflow_dispatch' && !contains(github.event.head_commit.message, '[no build]') }}
+      if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[no build]') }}
       run: |
         version_tag="${{ steps.create_tag.outputs.version_tag }}"
         release_name="${{ steps.create_tag.outputs.tag }}"
