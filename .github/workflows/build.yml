@@ -57,7 +57,6 @@ jobs:
           source PKGBUILD
           echo "tag=${pkgver}" >> "$GITHUB_OUTPUT"
           echo "basekernel=${_basekernel}" >> "$GITHUB_OUTPUT"
-          echo "series_tag=latest-edge" >> "$GITHUB_OUTPUT"
           echo "version_tag=${pkgver//./}" >> "$GITHUB_OUTPUT"
 
       - name: Publish Releases
@@ -65,16 +64,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          series_tag="${{ steps.create_tag.outputs.series_tag }}"
           version_tag="${{ steps.create_tag.outputs.version_tag }}"
           release_name="${{ steps.create_tag.outputs.tag }}"
           release_body=$'This release features the newest Manjaro ${{ steps.create_tag.outputs.basekernel }} Edge\nEvery major release will recieve performance improvements, bug fixes and more.\nInstall packages with `sudo pacman -U <file>`, you can use urls or file paths.'
 
-          for tag in "$series_tag" "$version_tag"; do
-            gh release delete "$tag" --yes --cleanup-tag || true
-            git tag -f "$tag" "$GITHUB_SHA"
-            git push origin "refs/tags/$tag" --force
-            gh release create "$tag" ./*.pkg.tar.* \
-              --title "$release_name" \
-              --notes "$release_body"
-          done
+          tag="$version_tag"
+          gh release delete "$tag" --yes --cleanup-tag || true
+          git tag -f "$tag" "$GITHUB_SHA"
+          git push origin "refs/tags/$tag" --force
+          gh release create "$tag" ./*.pkg.tar.* \
+            --title "$release_name" \
+            --notes "$release_body"

@@ -1,4 +1,4 @@
-# Maintainer: Noa Himesaka <himesaka@noa.codes>
+# Maintainer: Rishon Jonathan <https://github.com/RishonDev>
 # Manjaro maintainers:
 # Bernhard Landauer <bernhard@manjaro.org>
 # Philip Müller <philm[at]manjaro[dot]org>
@@ -45,7 +45,7 @@ options=('!strip')
 source=("https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${_basekernel}.tar.xz"
   "https://www.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
   'config'
-  patches::git+https://github.com/t2linux/linux-t2-patches.git
+  patches::git+https://github.com/RishonDev/linux-t2-patches
 )
 
 sha256sums=('SKIP'
@@ -65,20 +65,20 @@ prepare() {
     src="${src%%::*}"
     src="${src##*/}"
     [[ $src = *.patch ]] || continue
-    msg2 "Applying patch: $src..."
+    msg2 "Applying patch: $src..." || echo "WARNING: patch failed, continuing"
     patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
   done
 
-  local t2linux_patches=("$srcdir"/patches/*.patch)
-  if (( ${#t2linux_patches[@]} )) && [[ -e ${t2linux_patches[0]} ]]; then
-    mv "${t2linux_patches[@]}" "$srcdir"/
-    local patch_file
-    for patch_file in "${t2linux_patches[@]}"; do
-      src="${patch_file##*/}"
-      echo "Applying patch $src..." || echo "WARNING: patch failed, continuing"
-      patch -Np1 --forward <"../$src"
-    done
-  fi
+  t2linux_patches=$(ls $srcdir/patches | grep -e \.patch$)
+  mv $srcdir/patches/*.patch $srcdir/
+  local src
+  for src in "${source[@]}" $t2linux_patches; do
+    src="${src%%::*}"
+    src="${src##*/}"
+    [[ $src = *.patch ]] || continue
+    echo "Applying patch $src..."
+    patch -Np1 --forward <"../$src" || echo "WARNING: patch failed, continuing"
+  done
 
   echo "Setting config..."
   cp ../config .config
@@ -144,8 +144,13 @@ package_linux619-t2() {
   echo "${_kernver}" |
     install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
 
-  # remove build and source links
-  rm -f "${pkgdir}"/usr/lib/modules/${_kernver}/{build,source} || true
+  # remove build/source paths so the headers package can own them.
+  # Be tolerant here because modules_install output can vary by environment.
+  local _modpath="${pkgdir}/usr/lib/modules/${_kernver}"
+  for _path in "${_modpath}/build" "${_modpath}/source"; do
+    [[ -e "${_path}" || -L "${_path}" ]] || continue
+    rm -rf "${_path}"
+  done
 
   # now we call depmod...
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=Manjaro T2 Edge Kernel Weekly Update
-Comment=Checks for a newer upstream stable kernel every Sunday after login
-Exec=/home/rishon/Projects/T2Linux/manjaro-t2-kernel-edge/scripts/weekly_edge_update_autostart.sh
-Terminal=true
-X-GNOME-Autostart-enabled=true
