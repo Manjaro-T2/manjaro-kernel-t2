@@ -65,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version_tag="${{ steps.create_tag.outputs.version_tag }}"
-          release_name="${{ steps.create_tag.outputs.tag }}"
+          release_name="${{ steps.create_tag.outputs.tag }} - Release"
           release_body=$'This release features the newest Manjaro ${{ steps.create_tag.outputs.basekernel }} Edge\nEvery major release will recieve performance improvements, bug fixes and more.\nInstall packages with `sudo pacman -U <file>`, you can use urls or file paths.'
 
           tag="$version_tag"
