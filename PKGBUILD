@@ -157,6 +157,7 @@ package_linux618-t2() {
 }
 
 package_linux618-t2-headers() {
+  #Package headers
   pkgdesc="Header files and scripts for building modules for ${pkgbase/linux/Linux} kernel"
   depends=('gawk' 'python' 'libelf' 'pahole')
   provides=("linux-headers=$pkgver" "linux-t2-headers")
